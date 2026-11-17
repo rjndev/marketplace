@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { formatPrice, timeAgo, type Listing } from "@/lib/listings";
+import { buyNow } from "@/app/payments";
 import { MessageForm } from "./MessageForm";
 
 export function LiveListing({ initial }: { initial: Listing }) {
@@ -58,6 +59,15 @@ export function LiveListing({ initial }: { initial: Listing }) {
         </p>
         <p className="text-sm text-gray-500">{listing.category}</p>
         <p className="whitespace-pre-wrap text-sm">{listing.description}</p>
+        {listing.status === "sold" ? (
+          <p className="rounded-md bg-gray-100 px-4 py-2 text-center font-semibold">Sold</p>
+        ) : listing.seller_ready ? (
+          <form action={buyNow.bind(null, listing.id)}>
+            <button className="w-full rounded-md bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700">
+              Buy Now
+            </button>
+          </form>
+        ) : null}
         <MessageForm listingId={listing.id} />
       </div>
     </div>

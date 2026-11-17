@@ -9,12 +9,17 @@ export function Header() {
         </span>
         <span className="text-lg font-bold">Marketplace</span>
       </Link>
-      <Link
-        href="/create"
-        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-      >
-        Create listing
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link href="/sell/connect" className="text-sm font-semibold hover:underline">
+          Connect with Stripe
+        </Link>
+        <Link
+          href="/create"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+        >
+          Create listing
+        </Link>
+      </div>
     </header>
   );
 }

@@ -7,6 +7,8 @@ export type Listing = {
   category: string;
   image_url: string;
   created_at: string;
+  status: "available" | "sold";
+  seller_ready: boolean;
 };
 
 export function matchesFilters(
