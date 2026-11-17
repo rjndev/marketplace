@@ -1,12 +1,19 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { stripe } from "@/lib/stripe";
 
-export default async function ConnectReturn({
-  searchParams,
-}: {
-  searchParams: Promise<{ email?: string }>;
-}) {
+type Params = Promise<{ email?: string }>;
+
+export default function ConnectReturnPage({ searchParams }: { searchParams: Params }) {
+  return (
+    <Suspense fallback={<p className="p-6 text-gray-500">Loading...</p>}>
+      <ConnectReturn searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function ConnectReturn({ searchParams }: { searchParams: Params }) {
   const email = ((await searchParams).email ?? "").trim().toLowerCase();
 
   const { data: seller } = await supabaseAdmin

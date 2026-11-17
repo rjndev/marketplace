@@ -3,8 +3,6 @@ import { stripe } from "@/lib/stripe";
 import { PLATFORM_FEE_RATE } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
-export const runtime = "nodejs";
-
 export async function POST(req: Request) {
   const signature = req.headers.get("stripe-signature");
   if (!signature) return new Response("Missing signature", { status: 400 });

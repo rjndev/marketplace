@@ -1,13 +1,20 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { formatPrice } from "@/lib/listings";
 
-export default async function Success({
-  searchParams,
-}: {
-  searchParams: Promise<{ session_id?: string; acct?: string }>;
-}) {
+type Params = Promise<{ session_id?: string; acct?: string }>;
+
+export default function SuccessPage({ searchParams }: { searchParams: Params }) {
+  return (
+    <Suspense fallback={<p className="p-6 text-gray-500">Loading...</p>}>
+      <Success searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function Success({ searchParams }: { searchParams: Params }) {
   const { session_id, acct } = await searchParams;
 
   let paid = false;
