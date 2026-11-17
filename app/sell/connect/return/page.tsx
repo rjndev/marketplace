@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { stripe } from "@/lib/stripe";
+import { canAcceptPayments } from "@/lib/stripe";
 
 type Params = Promise<{ email?: string }>;
 
@@ -24,8 +24,7 @@ async function ConnectReturn({ searchParams }: { searchParams: Params }) {
 
   let ready = false;
   if (seller) {
-    const account = await stripe.accounts.retrieve(seller.stripe_account_id);
-    ready = account.charges_enabled;
+    ready = await canAcceptPayments(seller.stripe_account_id);
     await supabaseAdmin
       .from("sellers")
       .update({ charges_enabled: ready })

@@ -1,6 +1,5 @@
 import type Stripe from "stripe";
-import { stripe } from "@/lib/stripe";
-import { PLATFORM_FEE_RATE } from "@/lib/stripe";
+import { PLATFORM_FEE_RATE, canAcceptPayments, stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(req: Request) {
@@ -51,7 +50,7 @@ export async function POST(req: Request) {
     const account = event.data.object as Stripe.Account;
     const { error } = await supabaseAdmin
       .from("sellers")
-      .update({ charges_enabled: account.charges_enabled })
+      .update({ charges_enabled: await canAcceptPayments(account.id) })
       .eq("stripe_account_id", account.id);
     if (error) {
       console.error("seller update failed", error);

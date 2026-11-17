@@ -27,10 +27,14 @@ export async function connectStripe(
 
     let accountId = existing?.stripe_account_id as string | undefined;
     if (!accountId) {
-      const account = await stripe.accounts.create({
-        type: "express",
-        email,
-        capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
+      const account = await stripe.v2.core.accounts.create({
+        contact_email: email,
+        identity: { country: "US" },
+        dashboard: "express",
+        defaults: {
+          responsibilities: { fees_collector: "application", losses_collector: "application" },
+        },
+        configuration: { merchant: { capabilities: { card_payments: { requested: true } } } },
       });
       accountId = account.id;
       const { error: insertError } = await supabaseAdmin
@@ -39,11 +43,15 @@ export async function connectStripe(
       if (insertError) throw new Error(insertError.message);
     }
 
-    const link = await stripe.accountLinks.create({
+    const link = await stripe.v2.core.accountLinks.create({
       account: accountId,
-      type: "account_onboarding",
-      refresh_url: `${appUrl()}/sell/connect`,
-      return_url: `${appUrl()}/sell/connect/return?email=${encodeURIComponent(email)}`,
+      use_case: {
+        type: "account_onboarding",
+        account_onboarding: {
+          refresh_url: `${appUrl()}/sell/connect`,
+          return_url: `${appUrl()}/sell/connect/return?email=${encodeURIComponent(email)}`,
+        },
+      },
     });
     url = link.url;
   } catch (e) {
